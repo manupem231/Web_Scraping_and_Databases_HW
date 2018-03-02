@@ -8,78 +8,86 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-default">
-        <div class="container-fluid">
-        </div>
-    </nav>
-    <div class="container">
-        <div class="jumbotron">
-          <h1>Mission to Mars!</h1>
-          <p><a class="btn btn-primary btn-lg" href="/scrape" role="button">Scrape New Data</a></p>
-      </div>
- 
-    <div class="page-header">
-        <h3>Latest Mars News:</h3>
-        <p> <b> <h4> {{ mars.news_title}} </h4> </b> </p>
-        <p> </p>
-        <p>{{ mars.news_p }}</p>
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
     </div>
+  </nav>
 
+  <div class="container">
+    <div class="jumbotron">
+    <h1>Mission to Mars!</h1>
+    <p><a class="btn btn-primary btn-lg" href="/scrape" role="button">Scrape New Data</a></p>
+    </div> 
+
+    <!-- Displaying mars news & title -->
+    <div class="page-header">
+      <h3>Latest Mars News:</h3>
+      <p> <b> <h4> {{ mars.news_title}} </h4> </b> </p>
+      <p> </p>
+      <p>{{ mars.news_p }}</p>
+    </div>
+ 
+    <!-- Displaying featured image -->
     <div class="row">
-        <div class="col-md-8">
-          <div class="page-header">
-            <h3>Featured Mars Image:</h3>
-            <img src= "{{mars.featured_image_url}}" style="width:700px;height:500px;" alt="...">
+      <div class="col-md-8">
+        <div class="page-header">
+          <h3>Featured Mars Image:</h3>
+          <img src= "{{mars.featured_image_url}}" style="width:700px;height:500px;" alt="...">
+        </div>
+      </div>
+
+      <!-- Displaying mars weather -->
+        <div class="col-md-4">
+          <div class="thumbnail">
+            <div class="caption">
+              <h3>Current Weather on Mars:</h3>
+              <p> {{ mars.mars_weather }}</p>
+            </div>
           </div>
         </div>
-        <div class="col-md-4">
-            <div class="thumbnail">
-                <div class="caption">
-                <h3>Current Weather on Mars:</h3>
-                <p> {{ mars.mars_weather }}</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="thumbnail">
-              <div class="caption">
-              <h3>Mars Facts:</h3>
-              <p> {{ mars.mass }}</p>
-                </div>
-              </div>
-            </div>
-        </div>
-      
 
-      <div class="row">
-        <h2 class="text-center"> Mars Hemispheres: </h2> 
+      <!-- Displaying mars facts -->
+        <div class="col-md-4">
+          <div class="page-header">
+            <h3>Mars Facts:</h3>
+            <p> {{ mars.mars_facts | safe }}</p>
+          </div>
+        </div>
+    </div>
+      
+    <!-- Displaying mars hemisphere images and titles -->
+    <div class="row">
+      <h2 class="text-center"> Mars Hemispheres: </h2> 
         <div class="col-md-6">
           <div class="page-header">
           <h3>{{ mars.hemisphere_image_urls[0]['Title']}}</h3>
           <img src= "{{mars.hemisphere_image_urls[0]['Image_URL']}}" style="width:550px;height:550px;" alt="...">
           </div>
         </div>
-        <div class="col-md-6">
-            <div class="page-header">
-              <h3>{{ mars.hemisphere_image_urls[1]['Title']}}</h3>
-              <img src= "{{mars.hemisphere_image_urls[1]['Image_URL']}}" style="width:550px;height:550px;" alt="...">
-            </div>
-        </div>
+
         <div class="col-md-6">
           <div class="page-header">
-            <h3>{{ mars.hemisphere_image_urls[2]['Title']}}</h3>
-            <img src= "{{mars.hemisphere_image_urls[2]['Image_URL']}}" style="width:550px;height:550px;" alt="...">
+            <h3>{{ mars.hemisphere_image_urls[1]['Title']}}</h3>
+            <img src= "{{mars.hemisphere_image_urls[1]['Image_URL']}}" style="width:550px;height:550px;" alt="...">
           </div>
         </div>
+
         <div class="col-md-6">
           <div class="page-header">
-            <h3>{{ mars.hemisphere_image_urls[3]['Title']}}</h3>
-            <img src= "{{mars.hemisphere_image_urls[3]['Image_URL']}}" style="width:550px;height:550px;" alt="...">
+          <h3>{{ mars.hemisphere_image_urls[2]['Title']}}</h3>
+          <img src= "{{mars.hemisphere_image_urls[2]['Image_URL']}}" style="width:550px;height:550px;" alt="...">
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="page-header">
+          <h3>{{ mars.hemisphere_image_urls[3]['Title']}}</h3>
+          <img src= "{{mars.hemisphere_image_urls[3]['Image_URL']}}" style="width:550px;height:550px;" alt="...">
           </div>
         </div>
       </div>
-</div>
+
+  </div>
 
 </body>
 </html>
-
