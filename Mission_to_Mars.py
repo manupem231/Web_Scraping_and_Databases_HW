@@ -1,10 +1,4 @@
-
-# coding: utf-8
-
-# ## Mission to Mars
-
-# In[47]:
-
+# Mission to Mars
 
 # Dependencies
 from bs4 import BeautifulSoup
@@ -15,13 +9,17 @@ from splinter import Browser
 import time
 import pandas as pd
 
+def init_browser():
+    executable_path = {"executable_path": "chromedriver"}
+    return Browser("chrome", **executable_path, headless=True)
+
 def scrape():
 
-    # ## Scraping: NASA Mars News
+    browser = init_browser()
 
-    # In[42]:
+    # Scraping: NASA Mars News
 
-    mission_mars_data = {}
+    mission_mars_data = {} # Defining an empty dictionary
     # URL of page to be scraped
     url = 'https://mars.nasa.gov/news/?page=0&per_page=15&order=publish_date+desc%2Ccreated_at+desc&search=&category=19%2C165%2C184%2C204&blank_scope=Latest'
 
@@ -30,12 +28,12 @@ def scrape():
     # Create BeautifulSoup object; parse with 'lxml'
     soup = BeautifulSoup(response.text, 'html.parser')
 
-    # print(soup)
     # Examine the results, then determine element that contains sought info
     # results are returned as an iterable list
     results_paragraph = soup.find_all('div', class_='image_and_description_container')
     results_title = soup.find_all('div', class_='content_title')
 
+    # Retrieving 'News Paragraph'
     for result in results_paragraph:
         try:
             news_p = result.find('div', class_='rollover_description_inner').text
@@ -46,9 +44,7 @@ def scrape():
             print(e)
 
 
-    # In[45]:
-
-
+    # Retrieving 'News Title'
     for result in results_title:
         try:
             news_title = result.find('a').text
@@ -59,15 +55,10 @@ def scrape():
             print(e)
 
 
-    # ## Scraping: JPL Mars Space Images - Featured Image
-
-    # In[93]:
-
-
-    executable_path = {'executable_path': 'chromedriver'}
-    browser = Browser('chrome', **executable_path, headless=True)
-    url = 'https://www.jpl.nasa.gov/spaceimages/?search=&category=Mars'
-    browser.visit(url)
+    # Scraping: JPL Mars Space Images - Featured Image
+    #browser = init_browser()
+    featured_image_url = 'https://www.jpl.nasa.gov/spaceimages/?search=&category=Mars'
+    browser.visit(featured_image_url)
 
     time.sleep(4)
     html = browser.html
@@ -92,16 +83,13 @@ def scrape():
     mission_mars_data["featured_image_url"] = featured_image_url
 
 
-    # ## Scraping: Mars Weather
-
-    # In[46]:
-
+    # Scraping: Mars Weather
 
     # URL of page to be scraped
-    url = 'https://twitter.com/marswxreport?lang=en'
+    twitter_url = 'https://twitter.com/marswxreport?lang=en'
 
     # Retrieve page with the requests module
-    response = requests.get(url)
+    response = requests.get(twitter_url)
     # Create BeautifulSoup object; parse with 'lxml'
     soup = BeautifulSoup(response.text, 'html.parser')
 
@@ -121,83 +109,26 @@ def scrape():
             print(e)
 
 
-    # ## Scraping: Mars Facts
+    # Scraping: Mars Facts
+    mars_url = 'https://space-facts.com/mars/'
 
-    # In[48]:
-
-
-    url = 'https://space-facts.com/mars/'
-
-    Mars_Facts = pd.read_html(url)
-    Mars_Facts
-
-
-    # In[58]:
-
-
+    Mars_Facts = pd.read_html(mars_url)
     Mars_Facts_df = Mars_Facts[0]
-    Mars_Facts_df
-
-
-    # In[61]:
-
-
     Mars_Facts_df.columns = ['Mars_Profile_Parameter', 'Mars_Profile_Parameter_Value']
-    Mars_Facts_df
 
-
-    # ### DataFrame as HTML
-
-    # In[62]:
-
-
+    # DataFrame as HTML
     #Pandas also has a `to_html` method that we can use to generate HTML tables from DataFrames.
     Mars_Facts_html_table = Mars_Facts_df.to_html()
-    Mars_Facts_html_table
-
-
-    # In[63]:
-
-
     # We need to strip unwanted newlines to clean up the table.
-    Mars_Facts_html_table.replace('\n', '')
-
-
-    # In[64]:
-
-
+    facts = Mars_Facts_html_table.replace('\n', '')
     # Saving the table directly to a file.
     Mars_Facts_df.to_html('Mars_facts_table.html')
+    mission_mars_data["mars_facts"] = facts
 
-    # Reading html file and saving 'td' , 'tr' values into dictionary
-    mars_info=[]
-    mars_facts={}
-    file = open('Mars_facts_table.html', encoding='latin-1')
-    html = file.read()
-    soup = BeautifulSoup(html, 'html.parser')
-    for z in soup.table('td'):
-        mars_info.append(z.text.strip(':'))
-        mars_facts=dict([(k, v) for k,v in zip (mars_info[::2], mars_info[1::2])])
-    #print(mars_facts)
-
-    mission_mars_data["mars_facts"] = mars_facts
-
-
-    # In[65]:
-
-
-    #get_ipython().system('open Mars_facts_table.html')
-
-
-    # ## Scraping: Mars Hemisperes
-
-    # In[135]:
-
-
-    executable_path = {'executable_path': 'chromedriver'}
-    browser = Browser('chrome', **executable_path, headless=True)
-    url = 'https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars'
-    browser.visit(url)
+    # Scraping: Mars Hemisperes
+    browser = init_browser()
+    hemispheres_url = 'https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars'
+    browser.visit(hemispheres_url)
 
     time.sleep(4)
     html = browser.html
@@ -238,20 +169,13 @@ def scrape():
                     'Image_URL': img_url,
                 }
             hemisphere_image_urls.append(image_urls)
-            browser.visit(url)
+            browser.visit(hemispheres_url)
         except Exception as e:
             print(e)
             browser.quit()
     #print(hemisphere_image_urls)
     mission_mars_data["hemisphere_image_urls"] = hemisphere_image_urls
     browser.quit()
-
-    #mission_mars_data["hemisphere_image_urls"]
-    #mission_mars_data["Mars_facts"]
-    #mission_mars_data["mars_weather"]
-    #mission_mars_data["featured_image_url"]
-    #mission_mars_data["news_title"]
-    #mission_mars_data["news_p"]
 
     return mission_mars_data
 
